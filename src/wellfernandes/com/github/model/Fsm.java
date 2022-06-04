@@ -1,4 +1,4 @@
-package wellfernandes.com.github.model.entities;
+package wellfernandes.com.github.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
