@@ -5,8 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.SingleGraph;
+import org.graphstream.ui.fx_viewer.FxViewPanel;
+import org.graphstream.ui.fx_viewer.FxViewer;
+import org.graphstream.ui.javafx.FxGraphRenderer;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,6 +21,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import wellfernandes.com.github.model.Fsm;
 import wellfernandes.com.github.model.State;
@@ -49,17 +55,52 @@ public class ControllerPrincipalView implements Initializable {
 
 	private Stage stage;
 	private Scene scene;
-	private Graph graph;
 
-	private List<Graph> graphNodes = new ArrayList<>();
+	private FxViewer view;
+	private FxViewPanel panel;
+	private StackPane nodePane;
+
+	private Graph node;
+	private List<Graph> listNodes = new ArrayList<>();
+	private Scanner scanner = new Scanner(System.in);
 
 	@FXML
 	void onClickBtncreateState(ActionEvent event) {
 
+
+		node = new SingleGraph("graph"); // node
+		state = new State();
+
+		listNodes.add(node); // add node in list nodes
+		fsm.getStates().add(state); // add state in final state machine
+		fsm.setLastState(state); // add last state
+
+		node.addNode("test");
+		node.setAutoCreate(true);
+		
+		view = new FxViewer(node, FxViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+		panel = (FxViewPanel) view.addView(FxViewer.DEFAULT_VIEW_ID, new FxGraphRenderer());
+		nodePane = new StackPane();
+
+		nodePane.getChildren().addAll(panel); // prevent UI shift issues
+
+		view.enableAutoLayout();
+		view.getDefaultView().enableMouseOptions();
+		mainPane.getChildren().add(nodePane);
 	}
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+
+		view = new FxViewer(node, FxViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+		panel = (FxViewPanel) view.addView(FxViewer.DEFAULT_VIEW_ID, new FxGraphRenderer());
+		nodePane = new StackPane();
+
+		nodePane.getChildren().addAll(panel); // prevent UI shift issues
+
+		view.enableAutoLayout();
+		view.getDefaultView().enableMouseOptions();
+		mainPane.getChildren().add(nodePane);
 
 	}
 
@@ -157,13 +198,5 @@ public class ControllerPrincipalView implements Initializable {
 
 	public void setMainPane(AnchorPane mainPane) {
 		this.mainPane = mainPane;
-	}
-
-	public Graph getGraph() {
-		return graph;
-	}
-
-	public void setGraph(Graph graph) {
-		this.graph = graph;
 	}
 }
